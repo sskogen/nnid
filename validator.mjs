@@ -23,6 +23,13 @@ export const dnrAndHnr = (digits) => {
     return validate(digits, 'drn-and-hnr')
 }
 
+export const isRandom11Digit = (digits) => {
+    if (!elevenDigits.test(digits)) {
+        return false;
+    }
+    return [fnr, dnr, hnr, tnr, dnrAndHnr].every(func => func(digits).status === 'invalid');
+}
+
 export const getType = (digits) => {
     if (digits.substring(0, 1) >= 4 && digits.substring(2, 3) >= 4) {
         return 'dnr-and-hnr'
