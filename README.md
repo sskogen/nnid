@@ -5,7 +5,7 @@
 Replace [norwegian](https://no.wikipedia.org/wiki/F%C3%B8dselsnummer) and [swedish](https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)) identity numbers with fake ones to not expose real identities in your data. 
 
 The synthetically generated IDs will still pass validation of check digits. The synthetic
-IDs will have the month part of birth dates be between 80-92 to ensure that the ID never can be connected with a real one. 
+IDs will have the birth date part set to an invalid date to ensure that they will never match a real identity. 
 
 ## Usage
 To replace all valid NNIDs in the current directory (and subdirectories) with synthetic ones:
