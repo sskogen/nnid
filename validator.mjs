@@ -1,25 +1,26 @@
-// Copied from https://github.com/navikt/fnrvalidator/blob/master/src/validator.js and exported more functions
+// Copied from https://github.com/navikt/fnrvalidator/blob/master/src/validator.js and modified to validate against
+// a specific type instead of inferring the type before validation.
 
 const elevenDigits = new RegExp('^\\d{11}$')
 
 export const fnr = (digits) => {
-    return idnr(digits)
+    return validate(digits, 'fnr')
 }
 
 export const dnr = (digits) => {
-    return idnr(digits)
+    return validate(digits, 'dnr')
 }
 
 export const hnr = (digits) => {
-    return idnr(digits)
+    return validate(digits, 'hnr')
 }
 
 export const tnr = (digits) => {
-    return idnr(digits)
+    return validate(digits, 'tnr')
 }
 
 export const dnrAndHnr = (digits) => {
-    return idnr(digits)
+    return validate(digits, 'drn-and-hnr')
 }
 
 export const getType = (digits) => {
@@ -34,11 +35,6 @@ export const getType = (digits) => {
         return 'hnr'
     }
     return 'fnr'
-}
-
-const idnr = (digits) => {
-    const type = getType(digits)
-    return validate(digits, type)
 }
 
 export const validate = (digits, type) => {

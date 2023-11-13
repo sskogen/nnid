@@ -1,11 +1,28 @@
 import fs from 'fs';
 import path from 'path';
 import { T_IDS } from './ids.mjs';
-import {validate} from "./validator.mjs";
+import { program } from 'commander';
+import { fnr, dnr, hnr, tnr, dnrAndHnr } from './validator.mjs';
 
+program
+    .option('-r, --replace-invalid', 'Replace 11-digit numbers that are not valid with synthetic ones')
+    .option('-d, --dir <path>', 'Directory to process')
+
+program.parse(process.argv);
+const options = program.opts();
+
+const baseDirectory = options.directory ? path.resolve(options.directory) : process.cwd();
 const excludeDirs = ['.idea', '.git', 'target', 'node_modules'];
 const replacementNumbers = T_IDS;
 let usedReplacements = {}; // Object to keep track of used replacement numbers
+
+function isNumberInvalid(number) {
+    // Check if number is invalid in all validation functions
+    return ![fnr, dnr, hnr, tnr, dnrAndHnr].some(func => func(number).status === 'valid');
+}
+function isValidNNID(number) {
+    return fnr(number).status === 'valid';
+}
 
 function replaceNumbersInFile(filePath, numberMap) {
     let data = fs.readFileSync(filePath, 'utf8');
@@ -30,14 +47,10 @@ function getReplacementNumber(originalNumber) {
     return usedReplacements[originalNumber];
 }
 
-function isValidNumber(number) {
-    const validation = validate(number, 'fnr');
-    return validation.status === 'valid';
-}
-
-export default function synthesize(dirPath = process.cwd()) {
+export default function synthesize(dirPath = baseDirectory) {
     const numberMap = {}; // Map of original numbers to their replacements
     const filesToProcess = [];
+    const validate = options.replaceInvalid ? isNumberInvalid : isValidNNID;
 
     function traverseFileSystem(currentPath) {
         const entries = fs.readdirSync(currentPath, { withFileTypes: true });
@@ -54,7 +67,7 @@ export default function synthesize(dirPath = process.cwd()) {
 
                 while ((match = regex.exec(data))) {
                     const number = match[0];
-                    if (isValidNumber(number)) {
+                    if (validate(number)) {
                         numberMap[number] = getReplacementNumber(number);
                         if (!filesToProcess.includes(fullPath)) {
                             filesToProcess.push(fullPath);

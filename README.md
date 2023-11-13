@@ -8,10 +8,10 @@ IDs will have the month part of birth dates be between 80-92 to ensure that the 
 ## Usage
 To replace all valid NNIDs in the current directory (and subdirectories) with synthetic ones:
 ```bash
-npx @sskogen/nnid
+npx nnid
 ```
 
-To replace NNIDs in a specific directory (and subdirectories):
-```bash
-npx @sskogen/nnid ../another/directory
-```
+Options:
+
+* -r, --replace-invalid : Replace 11-digit numbers that do not qualify with any ID types with synthetic ones.
+* -d, --dir: Directory to search for numbers in. Defaults to current directory.
