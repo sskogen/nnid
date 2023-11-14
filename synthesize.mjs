@@ -17,12 +17,15 @@ function isValidNNID(number) {
     return fnr(number).status === 'valid';
 }
 
-function replaceNumbersInFile(filePath, numberMap) {
+function replaceNumbersInFile(filePath, numberMap, verbose) {
     let data = fs.readFileSync(filePath, 'utf8');
     let result = data;
 
     // Replace all occurrences of each number with its mapped replacement
     for (const [originalNumber, replacementNumber] of Object.entries(numberMap)) {
+        if (verbose) {
+            console.log(`${originalNumber} -> ${replacementNumber} in ${filePath}`);
+        }
         result = result.replace(new RegExp('\\b' + originalNumber + '\\b', 'g'), replacementNumber);
     }
 
@@ -47,9 +50,13 @@ function getSwedishReplacementNumber(originalNumber) {
     return usedReplacements[originalNumber];
 }
 
-export default function synthesize({dirPath, swedish, replaceInvalid}) {
+export default function synthesize({dirPath, swedish, replaceInvalid, verbose}) {
+    if (verbose) {
+        console.log(`Synthesize${replaceInvalid ? ' invalid ' : ''} ${swedish ? 'swedish' : 'norwegian'} IDs in ${dirPath}`);
+    }
     const numberMap = {}; // Map of original numbers to their replacements
     const filesToProcess = [];
+    const invalidIDs = new Set();
     const validate = swedish ? isValidSwedishPersonalNumber : replaceInvalid ? isNumberInvalid : isValidNNID;
 
     function traverseFileSystem(currentPath) {
@@ -72,6 +79,8 @@ export default function synthesize({dirPath, swedish, replaceInvalid}) {
                         if (!filesToProcess.includes(fullPath)) {
                             filesToProcess.push(fullPath);
                         }
+                    } else if (verbose && !replaceInvalid) {
+                        invalidIDs.add(number);
                     }
                 }
             }
@@ -80,8 +89,13 @@ export default function synthesize({dirPath, swedish, replaceInvalid}) {
 
     traverseFileSystem(dirPath);
 
+    if (verbose) {
+        invalidIDs.forEach(id => {
+            console.log(`${id} is not a valid ${swedish ? 'swedish' : 'norwegian'} ID and will not be replaced`);
+        });
+    }
     // Replace numbers in the collected files
     for (const file of filesToProcess) {
-        replaceNumbersInFile(file, numberMap);
+        replaceNumbersInFile(file, numberMap, verbose);
     }
 }

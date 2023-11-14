@@ -15,7 +15,8 @@ npx nnid
 
 Options:
 
-* -r, --replace-invalid : Replace 11-digit numbers that do not qualify with any ID types with synthetic ones.
+* -r, --replace-invalid : Replace 11-digit numbers that do not qualify with any norwegian ID types with synthetic ones.
 * -d, --dir: Directory to search for numbers in. Defaults to current directory.
 * --swedish: Replace 12-digit numbers that are valid swedish personal numbers with synthetic ones.
 * --fake-swedish: Generate a random synthetic swedish personal number.
+* -v, --verbose: Verbose output.
