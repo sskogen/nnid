@@ -20,6 +20,7 @@ function isValidNNID(number) {
 function replaceNumbersInFile(filePath, numberMap, verbose) {
     let data = fs.readFileSync(filePath, 'utf8');
     let result = data;
+    let newFilePath = filePath;
 
     // Replace all occurrences of each number with its mapped replacement
     for (const [originalNumber, replacementNumber] of Object.entries(numberMap)) {
@@ -27,9 +28,17 @@ function replaceNumbersInFile(filePath, numberMap, verbose) {
             console.log(`${originalNumber} -> ${replacementNumber} in ${filePath}`);
         }
         result = result.replace(new RegExp('\\b' + originalNumber + '\\b', 'g'), replacementNumber);
+
+        // Replace occurrence if filepath contains originalNumber
+        if (filePath.includes(originalNumber)) {
+            newFilePath=filePath.replace(new RegExp('(.*)' + originalNumber + '(.*)'), '$1' + replacementNumber + '$2');
+        }
     }
 
     fs.writeFileSync(filePath, result, 'utf8');
+    if (filePath !== newFilePath) {
+        fs.renameSync(filePath, newFilePath);
+    };
 }
 
 function getReplacementNumber(originalNumber) {
