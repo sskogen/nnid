@@ -2,6 +2,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.5.0] - 2023-12-21
+### Added
+- Include replacement of valid 'd-numbers' in addition to 'fødselsnummer' as default.
+- Generate random synthetic 'fødselsnummer' with --fake option.
+- Generate random synthetic 'd-number' with --fake-d option.
+
 ## [1.4.0] - 2023-11-14
 ### Added
 - Rename file if filename contains a number to be replaced.
